@@ -1,0 +1,17 @@
+{
+  "name": "project1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "webpack-cli": "^3.2.3",
+    "webpack-dev-server": "^3.2.0",
+    "webpack": "^4.29.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "dev": "webpack-dev-server --port 9527 --open --hot --https"
+  },
+  "author": "",
+  "license": "ISC"
+}

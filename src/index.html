@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Autharization</title>
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.6.0/qs.min.js"></script>
+</head>
+<body>
+    <div id="app" class="container">
+        <main v-if="!logged" class="jumbotron jumbotron-fluid auth-form">
+            <form class="form" action="">
+                <div v-if="error" class="error-viewer">
+                    {{ error }}
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="email" id="email" placeholder="E-Mail" v-model="mail" :class="{complete: min_email_entered}">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="password" id="password" placeholder="Password" v-model="pass" :class="{complete: pass_entered}">
+                </div>
+                <div data-callback="recaptchaCallback" class="g-recaptcha"
+                    data-sitekey="6Le50G4UAAAAAChafjpO0rspu21wnMwhWdEINLR3"></div>
+                <button class="login-btn btn btn btn-primary btn-lg" @click="postLogin" type="button" :disabled="valid">Login</button>
+            </form>
+        </main>
+    </div>
+    <div id="tables-app" class="container">
+        <section v-if="logged" class="tables">
+            <div class="stats">
+                <h1 class="title">Balance Stats</h1>
+                <viewer v-bind:itemid="0" :itemmode="mode" :view_mode="graph_view" :search_params="{currencies: [1,2,3], srcs: [1]}">
+                </viewer>
+                <viewer v-bind:itemid="1" :itemmode="mode" :view_mode="graph_view" :search_params="{currencies: [4,5], srcs: [1]}">
+                </viewer>
+                <viewer v-bind:itemid="2" :itemmode="mode" :view_mode="graph_view" :search_params="{currencies: [1,2,3], srcs: [2]}">
+                </viewer>
+                <viewer v-bind:itemid="3" :itemmode="mode" :view_mode="graph_view" :search_params="{currencies: [4,5], srcs: [2]}">
+                </viewer>
+            </div>
+            <div class="fiat-trans">
+                <h1 class="title">Fiat Transactions</h1>
+                <section class="block new-block">
+                    <h2>New</h2>
+                    <transfer mode="fiat" :search_params="['TX_NEW']"></fiat-transfer>
+                    <transfer mode="fiat" :search_params="['TX_INPROGRESS','TX_INPROGRESSD','TX_INPROGRESST','TX_EXTREADY']"></fiat-transfer>
+                </section>
+                <section class="block progress-block">
+                    <h2>In progress</h2>
+                    <transfer mode="fiat" :search_params="['TX_EPROCESSING']"></fiat-transfer>
+                    <transfer mode="fiat" :search_params="['TX_SUCCESS','TX_ESUCCESS']"></fiat-transfer>
+                </section>
+                <section class="block cancel-block">
+                    <h2>Cancelled</h2>
+                    <transfer mode="fiat" :search_params="['TX_CANCELED','TX_ECANCELED']"></fiat-transfer>
+                    <transfer mode="fiat" :search_params="['TX_CORRUPTED']"></fiat-transfer>
+                </section>
+                <section class="block action-block">
+                    <h2>Manual</h2>
+                    <transfer mode="fiat" :search_params="['TX_EPROCESSING']" v-bind:action_table='true'></fiat-transfer>
+                </section>
+            </div>
+            <div class="crypto-trans">
+                <h1 class="title">Crypto Transactions</h1>
+                <section class="block new-block">
+                    <h2>New</h2>
+                    <transfer mode="crypto" :search_params="['TX_NEW']"></transfer>
+                    <transfer mode="crypto" :search_params="['TX_INPROGRESS','TX_INPROGRESSD','TX_INPROGRESST','TX_EXTREADY']"></transfer>
+                </section>
+                <section class="block progress-block">
+                    <h2>In progress</h2>
+                    <transfer mode="crypto" :search_params="['TX_EPROCESSING']"></transfer>
+                    <transfer mode="crypto" :search_params="['TX_SUCCESS','TX_ESUCCESS']"></transfer>
+                </section>
+                <section class="block cancel-block">
+                    <h2>Cancelled</h2>
+                    <transfer mode="crypto" :search_params="['TX_CANCELED','TX_ECANCELED']"></transfer>
+                    <transfer mode="crypto" :search_params="['TX_CORRUPTED']"></transfer>
+                </section>
+                <section class="block action-block">
+                    <h2>Manual</h2>
+                    <transfer mode="crypto" :search_params="['TX_EPROCESSING']" v-bind:action_table='true'></transfer>
+                </section>
+            </div>
+        </section>
+    </div>
+    <script src="js/store.js" async defer></script>
+    <script src="app.js" async defer></script>
+    <script src="js/components/viewer-stats.js"></script>
+    <script src="js/components/viewer-transfer.js"></script>
+    <script src="js/tables.js"></script>
+    <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/4.1.0/echarts-en.min.js" async defer></script>
+</body>
+</html>
